@@ -37,9 +37,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            type=raw,value=p${{ inputs.plugin_version }}-t${{ inputs.theme_version }}
+          images: ghcr.io/mni-cloud/keycloak
+          tags: latest
 
       - name: Download plugin artifact
         run: |
