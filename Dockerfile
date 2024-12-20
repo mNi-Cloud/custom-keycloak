@@ -3,19 +3,20 @@ FROM bitnami/keycloak:25.0.4-debian-12-r0 as builder
 ARG PLUGIN_VERSION
 ARG THEME_VERSION
 
-COPY reghook.jar /opt/keycloak/providers/
-COPY custom-theme.jar /opt/keycloak/providers/
+COPY reghook.jar /opt/bitnami/keycloak/providers/
+COPY custom-theme.jar /opt/bitnami/keycloak/providers/
 
-RUN /opt/keycloak/bin/kc.sh build
+RUN /opt/bitnami/keycloak/bin/kc.sh build
 
 FROM bitnami/keycloak:25.0.4-debian-12-r0
 
-COPY --from=builder /opt/keycloak/ /opt/keycloak/
+COPY --from=builder /opt/bitnami/keycloak/ /opt/bitnami/keycloak/
 
 USER root
-RUN chown -R keycloak:keycloak /opt/keycloak/providers/ && \
-    chown -R keycloak:keycloak /opt/keycloak/lib/quarkus/ && \
-    chown -R keycloak:keycloak /opt/keycloak/themes/
-USER keycloak
+RUN chown -R 1001:1001 /opt/bitnami/keycloak/providers/ && \
+    chown -R 1001:1001 /opt/bitnami/keycloak/lib/quarkus/ && \
+    chown -R 1001:1001 /opt/bitnami/keycloak/themes/
 
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start"]
+USER 1001
+
+ENTRYPOINT ["/opt/bitnami/keycloak/bin/kc.sh", "start"]
