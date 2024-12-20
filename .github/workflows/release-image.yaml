@@ -7,10 +7,12 @@ on:
         description: 'Plugin version to use'
         required: true
         type: string
+        default: 'latest'
       theme_version:
         description: 'Theme version to use'
         required: true
         type: string
+        default: 'latest'
 
 jobs:
   build:
@@ -42,11 +44,19 @@ jobs:
 
       - name: Download plugin artifact
         run: |
-          curl -L -o reghook.jar "https://github.com/${{ github.repository_owner }}/keycloak-registration-hook/releases/download/v${{ inputs.plugin_version }}/reghook-${{ inputs.plugin_version }}.jar"
+          VERSION=${{ inputs.plugin_version }}
+          if [ "$VERSION" = "latest" ]; then
+            VERSION=$(curl -s https://api.github.com/repos/${{ github.repository_owner }}/keycloak-registration-hook/releases/latest | jq -r .tag_name | sed 's/v//')
+          fi
+          curl -L -o reghook.jar "https://github.com/${{ github.repository_owner }}/keycloak-registration-hook/releases/download/v${VERSION}/reghook-${VERSION}.jar"
 
       - name: Download theme artifact
         run: |
-          curl -L -o custom-theme.jar "https://github.com/${{ github.repository_owner }}/keycloak-custom-theme/releases/download/v${{ inputs.theme_version }}/keycloak-theme-for-kc-22-and-above.jar"
+          VERSION=${{ inputs.theme_version }}
+          if [ "$VERSION" = "latest" ]; then
+            VERSION=$(curl -s https://api.github.com/repos/${{ github.repository_owner }}/keycloak-custom-theme/releases/latest | jq -r .tag_name | sed 's/v//')
+          fi
+          curl -L -o custom-theme.jar "https://github.com/${{ github.repository_owner }}/keycloak-custom-theme/releases/download/v${VERSION}/keycloak-theme-for-kc-22-and-above.jar"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
