@@ -4,4 +4,4 @@ ARG PLUGIN_VERSION
 ARG THEME_VERSION
 
 COPY reghook.jar /opt/bitnami/keycloak/providers/
-COPY custom-theme.jar /opt/bitnami/keycloak/providers/
+COPY custom-theme.jar /opt/bitnami/keycloak/themes/
